@@ -2,6 +2,7 @@ let testing = true;
 
 let a = []; // truth, inside each small box is number
 let b = []; // possibilities, inside each small box is an array of 9
+let winning = false;
 
 let side = 630;
 
@@ -58,15 +59,18 @@ function setup() {
   
   buildPossibilities();
   seekingTruth();
+  boxBomb();
 
-  if (testing) {
-    console.log(b);
-    let i =1;
-    for (let j = 0; j < 9; j++) { // show the built possibilities
-      console.log("pos "+i+"," + j + "(" + a[i][j] + ")" + ": " + b[i][j]);
-    }
-  }
+  // if (testing) {
+  //   console.log(b);
+  //   let i =1;
+  //   for (let j = 0; j < 9; j++) { // show the built possibilities
+  //     console.log("pos "+i+"," + j + "(" + a[i][j] + ")" + ": " + b[i][j]);
+  //   }
+  // }
 
+  if(!winning) alert("not yet winning");
+  else alert("solving complete");
 }
 
 function draw() {
@@ -82,17 +86,20 @@ function draw() {
   }
 
   // filling in the truth
-  textSize(0.50*size);
-  textAlign(CENTER, CENTER);
   for(let i=0;i<9;i++){
     let initX =(i%3)*size*3+size/2;
     let initY = floor(i/3)*size*3+size/2;
-    // text("A",initX,initY);
     
     for(let j=0;j<9;j++){
+      textSize(0.50*size);
+      textAlign(CENTER, CENTER);
       let addX = (j%3)*size;
       let addY = floor(j/3)*size;
       if(a[i][j]) text(a[i][j].toString(),initX+addX,initY+addY);
+      else{
+        textSize(0.2*size);
+        text(b[i][j].toString(),initX+addX,initY+addY);
+      }
     }
   }
 
@@ -159,9 +166,9 @@ function seekingTruth(){
       //if (testing) console.log("i am seeking truth");
       if(b[i][j]){
         let pos = b[i][j].filter(num => num != null);
-        if (testing) console.log("called on ("+i+","+j+") "+pos);
+        // if (testing) console.log("called on ("+i+","+j+") "+pos);
         if (pos.length === 1){
-          if (testing) console.log("IS KILLING ON ("+i+","+j+") with "+pos[0]);
+          // if (testing) console.log("IS KILLING ON ("+i+","+j+") with "+pos[0]);
           a[i][j] = pos[0];
           killPossibility(i,j);
           seekingTruth();
@@ -174,4 +181,44 @@ function seekingTruth(){
   if (testing) console.log("done seeking truth");
 
 
+}
+
+function boxBomb(){
+  for(let i=0;i<9;i++){
+    for(let j=0;j<9;j++){
+
+      if(b[i][j] && b[i][j].filter(num => num != null).length ===2){ // check whether b[i][j] consist only 2 possibilities
+        let pos = b[i][j].filter(num => num != null);
+        if (testing) console.log("boxBomb Check for box "+i+","+j+" ("+pos+")");
+
+        for(let k=j+1;k<9;k++){ // check next small block for the sameness of possibilities
+          
+          if(b[i][k] && JSON.stringify(b[i][j])==JSON.stringify(b[i][k])){
+            if (testing) console.log(i+","+j+" and "+i+","+k+" are the same box!");
+            for(let x=0;x<9;x++){
+              if(x!=j && x!=k){ // delete the 2 possibilities in all other small box but b[i][j] and b[i][k]
+                
+                if(b[i][x]){
+                  if (testing) console.log("boxBombing! small box:"+i+","+x);
+                  b[i][x][pos[0]-1] = null;
+                  b[i][x][pos[1]-1] = null;
+                }
+                
+              }
+            }
+
+          }
+        }
+      }
+    }
+  }
+}
+
+function checkWin(){
+  for(let i=0;i<9;i++){
+    for(let j=0;j<9;j++){
+      if(b[i][j]) return;
+    }
+  }
+  winning = true;
 }
