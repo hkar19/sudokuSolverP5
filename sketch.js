@@ -1,12 +1,12 @@
 let testing = true;
 
+let a = []; // truth, inside each small box is number
+let b = []; // possibilities, inside each small box is an array of 9
+
 function setup() {
   createCanvas(400, 400);
   
-  let a = []; // truth, inside each small box is number
-  let b = []; // possibilities, inside each small box is an array of 9
-  
-  for(let i =0;i<9;i++){
+  for(let i =0;i<9;i++){ // initiating a and b
     a = a.concat([[]]);
     b = b.concat([[]]);
     
@@ -54,7 +54,8 @@ function setup() {
           null, null, null];
   
   
-  b = buildPossibilities(a, b);
+  buildPossibilities();
+  seekingTruth();
 
   if (testing) {
     // console.log(b);
@@ -70,38 +71,58 @@ function setup() {
 //   background(220);
 // }
 
-function buildPossibilities(a, b) {
-  let bPos = b;
-
+function buildPossibilities() {
   for (let i = 0; i < a.length; i++) { 
     for (let j = 0; j < 9; j++) {
-      if (a[i][j]) {
-        let fNo = a[i][j]; // forbidden number
-        bPos[i][j] = null; // killing all possibility in the small box
-        
-        // killing possibility in each small box for particular big box "i"
-        for (let k = 0; k < 9; k++) { 
-          if (bPos[i][k]) { 
-            bPos[i][k][fNo - 1] = null;
+      killPossibility(i,j);
+    }
+  }
+
+}
+
+function killPossibility(i,j){
+  if (a[i][j]) {
+    let fNo = a[i][j]; // forbidden number
+    b[i][j] = null; // killing all possibility in the small box
+    
+    // killing possibility in each small box for particular big box "i"
+    for (let k = 0; k < 9; k++) { 
+      if (b[i][k]) { 
+        b[i][k][fNo - 1] = null;
+      }
+    }
+    
+    // killing possibility in row
+    for(let m =0;m<3;m++){ // big box numbering
+      let _i = floor(i/3)*3 +m;
+      
+      if(_i != i){
+        for(let n=0;n<3;n++){
+          let _j = floor(j/3)*3 +n;
+          if(bPos[_i][_j]){
+            b[_i][_j][fNo-1] = null;
           }
         }
-        
-        // killing possibility in row
-        for(let m =0;m<3;m++){ // big box numbering
-          let _i = floor(i/3) +m;
-          
-          if(_i != i){
-            for(let n=0;n<3;n++){
-              let _j = floor(j/3)+n;
-              if(bPos[_i][_j]){
-                bPos[_i][_j][fNo-1] = null;
-              }
-            }
+      }
+    }
+
+    // killing possibility in a column
+    for(let m =0;m<3;m++){ // big box numbering
+      let _i = i%3 +3*m;
+      
+      if(_i != i){
+        for(let n=0;n<3;n++){
+          let _j = j%3+3*n;
+          if(bPos[_i][_j]){
+            bPos[_i][_j][fNo-1] = null;
           }
         }
       }
     }
   }
+}
 
-  return bPos;
+function seekingTruth(){
+  let bPos = b;
+  let aNow = a;
 }
