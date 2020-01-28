@@ -58,7 +58,7 @@ function setup() {
   seekingTruth();
 
   if (testing) {
-    // console.log(b);
+    console.log(b);
     let i =1;
     for (let j = 0; j < 9; j++) { // show the built possibilities
       console.log("pos "+i+"," + j + "(" + a[i][j] + ")" + ": " + b[i][j]);
@@ -99,7 +99,7 @@ function killPossibility(i,j){
       if(_i != i){
         for(let n=0;n<3;n++){
           let _j = floor(j/3)*3 +n;
-          if(bPos[_i][_j]){
+          if(b[_i][_j]){
             b[_i][_j][fNo-1] = null;
           }
         }
@@ -113,8 +113,8 @@ function killPossibility(i,j){
       if(_i != i){
         for(let n=0;n<3;n++){
           let _j = j%3+3*n;
-          if(bPos[_i][_j]){
-            bPos[_i][_j][fNo-1] = null;
+          if(b[_i][_j]){
+            b[_i][_j][fNo-1] = null;
           }
         }
       }
@@ -123,6 +123,26 @@ function killPossibility(i,j){
 }
 
 function seekingTruth(){
-  let bPos = b;
-  let aNow = a;
+  //let seeking = true;
+
+  for(let i=0;i<9;i++){
+    for(let j=0;j<9;j++){
+      //if (testing) console.log("i am seeking truth");
+      if(b[i][j]){
+        let pos = b[i][j].filter(num => num != null);
+        if (testing) console.log("called on ("+i+","+j+") "+pos);
+        if (pos.length === 1){
+          if (testing) console.log("IS KILLING ON ("+i+","+j+") with "+pos[0]);
+          a[i][j] = pos[0];
+          killPossibility(i,j);
+          seekingTruth();
+          return;
+        }
+      }
+    }
+  }
+
+  if (testing) console.log("done seeking truth");
+
+
 }
