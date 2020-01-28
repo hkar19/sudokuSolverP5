@@ -3,8 +3,10 @@ let testing = true;
 let a = []; // truth, inside each small box is number
 let b = []; // possibilities, inside each small box is an array of 9
 
+let side = 630;
+
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(side, side);
   
   for(let i =0;i<9;i++){ // initiating a and b
     a = a.concat([[]]);
@@ -67,9 +69,36 @@ function setup() {
 
 }
 
-// function draw() {
-//   background(220);
-// }
+function draw() {
+  background(255);
+  let size = side/9;
+
+  // drawing the borders
+  for(let i=1;i<9;i++){
+    if(i%3===0) strokeWeight(5);
+    else strokeWeight(1);
+    line(size*i,0,size*i,side);
+    line(0,size*i,side,size*i);
+  }
+
+  // filling in the truth
+  textSize(0.50*size);
+  textAlign(CENTER, CENTER);
+  for(let i=0;i<9;i++){
+    let initX =(i%3)*size*3+size/2;
+    let initY = floor(i/3)*size*3+size/2;
+    // text("A",initX,initY);
+    
+    for(let j=0;j<9;j++){
+      let addX = (j%3)*size;
+      let addY = floor(j/3)*size;
+      if(a[i][j]) text(a[i][j].toString(),initX+addX,initY+addY);
+    }
+  }
+
+
+
+}
 
 function buildPossibilities() {
   for (let i = 0; i < a.length; i++) { 
