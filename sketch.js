@@ -20,47 +20,37 @@ function setup() {
     }
   }
   
+  let puzzle00 = [ // 7 937 193 567
+    [null,null,null,  null,null,9,    null,6,null],
+    [5,6,null,        null,null,null, 8, null, null],
+    [null,null,null,  null,1,3,       null, null, 2],
+    [null,null,8,     6,null,null,    4,7,null],
+    [null,null,4,     null,null,null, 6,null,null],
+    [null,2,6,        null,null,1,    8,null,null],
+    [7,null,null,     1,8,null,       null,null,null],
+    [null,null,8,     null,null,null, null,3,7],
+    [null,5,null,     9,null,null,    null,null,null]
+  ];
   
-  a[0] = [null, null, null, 
-          null, null, 9, 
-          null, 6, null];
+  let puzzle01 = [ // 2 574 684 724
+    [null,null,null,  null,2,null,    3,7,null],
+    [null,null,8,     5,1,null,       null,null,4],
+    [2,null,null,     null,7,null,    null,null,5],
+    [6,null,null,     2,null,null,    4,9,null],
+    [null,null,null,  null,null,null, null,null,null],
+    [null,5,1,        null,null,7,    null,null,2],
+    [5,null,null,     null,3,null,    null,null,9],
+    [2,null,null,     null,8,5,       4,null,null],
+    [null,8,3,        null,1,null,    null,null,null]
+  ];
+  
+  for(let i=0;i<9;i++){
+    a[i] = puzzle01[i];
+  }
 
-  a[1] = [5, 6, null, 
-          null, null, null, 
-          8, null, null];
-  
-  a[2] = [null, null, null, 
-          null, 1, 3, 
-          null, null, 2];
-  
-  a[3] = [null, null, 8, 
-          6, null, null, 
-          4, 7, null];
-  
-  a[4] = [null, null, 4, 
-          null, null, null, 
-          6, null, null];
-
-  a[5] = [null, 2, 6, 
-          null, null, 1, 
-          8, null, null];
-  
-  a[6] = [7, null, null, 
-          1, 8, null, 
-          null, null, null];
-  
-  a[7] = [null, null, 8, 
-          null, null, null, 
-          null, 3, 7];
-  
-  a[8] = [null, 5, null, 
-          9, null, null, 
-          null, null, null];
-  
-  
   buildPossibilities();
 
-  let n = 4;
+  let n = 30;
   let cyc =0;
   while(!winning && n>0){
     seekingTruth();
@@ -113,7 +103,7 @@ function draw() {
       let addY = floor(j/3)*size;
       if(a[i][j]) text(a[i][j].toString(),initX+addX,initY+addY);
       else{
-        textSize(0.2*size);
+        textSize(0.15*size);
         text(b[i][j].toString(),initX+addX,initY+addY);
       }
     }
