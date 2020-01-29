@@ -59,11 +59,22 @@ function setup() {
   
   
   buildPossibilities();
-  seekingTruth();
-  boxBomb();
-  seekingTruth();
-  for(let i=0;i<9;i++) soleCan(i);
-  seekingTruth();
+
+  let n = 4;
+  let cyc =0;
+  while(!winning && n>0){
+    seekingTruth();
+    for(let i=0;i<9;i++) soleCan(i);
+    boxBomb();
+    n--;
+    cyc++;
+    checkWin();
+  }
+  
+  
+  // seekingTruth();
+  
+  // seekingTruth();
 
   // if (testing) {
   //   console.log(b);
@@ -74,8 +85,8 @@ function setup() {
   // }
   
   checkWin();
-  if(!winning) alert("not yet winning");
-  else alert("solving complete");
+  if(!winning) alert("not yet winning in "+cyc+" cycles");
+  else alert("solving complete in "+cyc+" cycles");
 }
 
 function draw() {
