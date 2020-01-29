@@ -1,4 +1,5 @@
-let testing = true;
+let testing = false;
+let performance = true;
 
 let a = []; // truth, inside each small box is number
 let b = []; // possibilities, inside each small box is an array of 9
@@ -60,6 +61,9 @@ function setup() {
   buildPossibilities();
   seekingTruth();
   boxBomb();
+  seekingTruth();
+  for(let i=0;i<9;i++) soleCan(i);
+  seekingTruth();
 
   // if (testing) {
   //   console.log(b);
@@ -68,7 +72,8 @@ function setup() {
   //     console.log("pos "+i+"," + j + "(" + a[i][j] + ")" + ": " + b[i][j]);
   //   }
   // }
-
+  
+  checkWin();
   if(!winning) alert("not yet winning");
   else alert("solving complete");
 }
@@ -213,6 +218,40 @@ function boxBomb(){
     }
   }
 }
+
+function soleCan(i){
+  for(let num =1;num<=9;num++){ // check number num
+    if (a[i] && a[i].includes(num)) continue;
+
+    let count = 0;
+    let lastJ;
+    for(let j=0;j<9;j++){ // small Box
+      if (b[i][j] && b[i][j].includes(num)){
+        count++;
+        if (count>1) break;
+        lastJ = j;
+      }
+    }
+
+    if (count == 1){
+      if(testing) console.log("the only possibility for "+i+","+lastJ+" is "+num);
+      a[i][lastJ] = num;
+      killPossibility(i,lastJ);
+      soleCan(i);
+      if(testing) console.log("at "+i+", soleCan finished here");
+      return;
+    }
+
+  }
+}
+
+// function rowBomb(){
+//   for(let i=0;i<3;i++){
+//     for(let j=0;j<3;j++){
+      
+//     }
+//   }
+// }
 
 function checkWin(){
   for(let i=0;i<9;i++){
