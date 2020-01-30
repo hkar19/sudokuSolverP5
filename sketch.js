@@ -25,9 +25,11 @@ function setup() {
     [null,null,null,  null,null,9,    null,6,null],
     [5,6,null,        null,null,null, 8, null, null],
     [null,null,null,  null,1,3,       null, null, 2],
+
     [null,null,8,     6,null,null,    4,7,null],
     [null,null,4,     null,null,null, 6,null,null],
     [null,2,6,        null,null,1,    8,null,null],
+
     [7,null,null,     1,8,null,       null,null,null],
     [null,null,8,     null,null,null, null,3,7],
     [null,5,null,     9,null,null,    null,null,null]
@@ -38,16 +40,33 @@ function setup() {
     [null,null,null,  null,2,null,    3,7,null],
     [null,null,8,     5,1,null,       null,null,4],
     [2,null,null,     null,7,null,    null,null,5],
+
     [6,null,null,     2,null,null,    4,9,null],
     [null,null,null,  null,null,null, null,null,null],
     [null,5,1,        null,null,7,    null,null,2],
+
     [5,null,null,     null,3,null,    null,null,9],
     [2,null,null,     null,8,5,       4,null,null],
     [null,8,3,        null,1,null,    null,null,null]
   ];
   
+  // it was said puzzle02 can only be solved with swordfish pattern
+  let puzzle02 = [ // very hard! from http://www.sudokuessentials.com/Sudoku_Swordfish.html
+    [null,null,7,  null,null,4,    2,8,null],
+    [null,null,null,  null,2,5,    null,null,4],
+    [2,8,null,  null,null,null,    6,null,null],
+
+    [null,9,null,  3,null,null,    null,null,null],
+    [null,null,6,  null,null,null,    1,null,null],
+    [null,null,null,  null,null,2,    null,9,null],
+
+    [null,null,6,  null,null,null,    null,7,8],
+    [2,null,null,  5,7,null,    null,null,null],
+    [null,7,5,  4,null,null,    3,null,null]
+  ];
+  
   for(let i=0;i<9;i++){
-    a[i] = puzzle00[i];
+    a[i] = puzzle02[i];
   }
 
   buildPossibilities();
