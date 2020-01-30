@@ -1,5 +1,5 @@
 let testing = false;
-let performance = true;
+let testRowBomb = true;
 
 let a = []; // truth, inside each small box is number
 let b = []; // possibilities, inside each small box is an array of 9
@@ -47,17 +47,18 @@ function setup() {
   ];
   
   for(let i=0;i<9;i++){
-    a[i] = puzzle01[i];
+    a[i] = puzzle00[i];
   }
 
   buildPossibilities();
 
-  let n = 30;
+  let n = 10;
   let cyc =0;
   while(!winning && n>0){
     seekingTruth();
     for(let i=0;i<9;i++) soleCan(i);
     boxBomb();
+    rowBomb();
     n--;
     cyc++;
     checkWin();
@@ -124,6 +125,10 @@ function buildPossibilities() {
 
 }
 
+// when a[i][j] is not null, we kill possibility of value a[i][j] in:
+// - the big box i
+// - the row of a[i][j]
+// - the column of a[i][j]
 function killPossibility(i,j){
   if (a[i][j]) {
     let fNo = a[i][j]; // forbidden number
@@ -166,6 +171,8 @@ function killPossibility(i,j){
   }
 }
 
+// extracting the only possibility in b[i][j] into a[i][j]
+// then we killPossibility of number in a[i][j]
 function seekingTruth(){
   //let seeking = true;
 
@@ -222,7 +229,7 @@ function boxBomb(){
   }
 }
 
-function soleCan(i){
+function soleCan(i){ // checking sole candidate in a box i
   for(let num =1;num<=9;num++){ // check number num
     if (a[i] && a[i].includes(num)) continue;
 
@@ -248,13 +255,61 @@ function soleCan(i){
   }
 }
 
-// function rowBomb(){
-//   for(let i=0;i<3;i++){
-//     for(let j=0;j<3;j++){
+function rowBomb(){
+  for(let i=0;i<3;i++){
+    let startI = i*3;
+    for(let j=0;j<3;j++){
+      let startJ = j*3;
+      if (testRowBomb) console.log("-------<STARTING FROM "+startI+","+startJ+">-------");
+
+      for(let m=0;m<3;m++){
+        let checkI = startI +m;
+        for(let n=0;n<3;n++){
+          let checkJ = startJ +n;
+          if (testRowBomb) console.log("checking "+checkI+","+checkJ+"");
+
+          // checking small box with only 2 possibilities
+          if(b[checkI][checkJ] && b[checkI][checkJ].filter(num => num != null).length ===2){
+            let pos = b[checkI][checkJ].filter(num => num != null);
+            if (testRowBomb) console.log("small box with 2 possibilities detected at "+checkI+","+checkJ+" ("+pos+")");
+            
+            // checking other small boxes
+            for(let r=m;r<3;r++){
+              let anCheckI = startI +r;
+              for(let s=0;s<3;s++){ // we must start checking the leftmost small box in bigbox anCheckI
+                let anCheckJ = startJ +s;
+                if (testRowBomb) console.log("rowBomb Check for another box "+anCheckI+","+anCheckJ+" ("+b[anCheckI][anCheckJ]+")");
+                if(b[anCheckI][anCheckJ] && !((checkI == anCheckI) && (checkJ ==anCheckJ)) && JSON.stringify(b[checkI][checkJ])==JSON.stringify(b[anCheckI][anCheckJ])){
+
+                  if (testRowBomb) console.log(checkI+","+checkJ+" and "+anCheckI+","+anCheckJ+" are the same box!");
+                  
+                  // bombing the rest of small box
+                  for(let x=0;x<3;x++){
+                    let bombI = startI +x;
+                    for(let y=0;y<3;y++){
+                      let bombJ = startJ +y;
+                      
+                      if (testRowBomb) console.log("considering rowBombing small box "+bombI+","+bombJ);
+                      if(!( ((bombI == checkI) && (bombJ == checkJ)) || ((bombI == anCheckI) && (bombJ == anCheckJ)) )){
+                        if(b[bombI][bombJ]){
+                          if (testRowBomb) console.log("rowBombing! small box:"+bombI+","+bombJ);
+                          b[bombI][bombJ][pos[0]-1] = null;
+                          b[bombI][bombJ][pos[1]-1] = null;
+                        }
+                      }
+                    }
+                  }
+                }
+
+              }
+            }
+          }
+        }
+      }
       
-//     }
-//   }
-// }
+    }
+  }
+}
 
 function checkWin(){
   for(let i=0;i<9;i++){
