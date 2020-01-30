@@ -20,6 +20,7 @@ function setup() {
     }
   }
   
+  // this puzzle can be done with soleCan, seekingTruth, and boxBomb
   let puzzle00 = [ // 7 937 193 567
     [null,null,null,  null,null,9,    null,6,null],
     [5,6,null,        null,null,null, 8, null, null],
@@ -32,6 +33,7 @@ function setup() {
     [null,5,null,     9,null,null,    null,null,null]
   ];
   
+  // this puzzle requires rowBomb or colBomb to solve.
   let puzzle01 = [ // 2 574 684 724
     [null,null,null,  null,2,null,    3,7,null],
     [null,null,8,     5,1,null,       null,null,4],
@@ -75,7 +77,7 @@ function setup() {
   // }
   
   checkWin();
-  if(!winning) alert("not yet winning in "+cyc+" cycles");
+  if(!winning) alert("not yet solved in "+cyc+" cycles");
   else alert("solving complete in "+cyc+" cycles");
 }
 
