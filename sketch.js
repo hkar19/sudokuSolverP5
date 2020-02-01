@@ -1,27 +1,21 @@
 let testing = false;
-let testRowBomb = true;
+let testRowBomb = false;
+
 
 let a = []; // truth, inside each small box is number
 let b = []; // possibilities, inside each small box is an array of 9
 let winning = false;
+let solving = false; // it will be true when the solvingButton is pressed;
 
-let side = 630;
+let currentPuzzle = 0;
 
-function setup() {
-  createCanvas(side, side);
-  
-  for(let i =0;i<9;i++){ // initiating a and b
-    a = a.concat([[]]);
-    b = b.concat([[]]);
-    
-    for(let j=0;j<9;j++){
-      //a[i] = a[i].concat([]); // by doing this, i made sure every small box is addressable
-      b[i] = b[i].concat([[1,2,3,4,5,6,7,8,9]]);
-    }
-  }
-  
-  // this puzzle can be done with soleCan, seekingTruth, and boxBomb
-  let puzzle00 = [ // 7 937 193 567
+let cyc; // number of cycles.
+
+let side = 400;
+
+let puzzles = [
+  [ // 7 937 193 567
+    // this puzzle can be done with soleCan, seekingTruth, and boxBomb
     [null,null,null,  null,null,9,    null,6,null],
     [5,6,null,        null,null,null, 8, null, null],
     [null,null,null,  null,1,3,       null, null, 2],
@@ -33,10 +27,10 @@ function setup() {
     [7,null,null,     1,8,null,       null,null,null],
     [null,null,8,     null,null,null, null,3,7],
     [null,5,null,     9,null,null,    null,null,null]
-  ];
-  
-  // this puzzle requires rowBomb or colBomb to solve.
-  let puzzle01 = [ // 2 574 684 724
+  ],
+
+  [ // 2 574 684 724
+    // this puzzle requires rowBomb or colBomb to solve.
     [null,null,null,  null,2,null,    3,7,null],
     [null,null,8,     5,1,null,       null,null,4],
     [2,null,null,     null,7,null,    null,null,5],
@@ -48,10 +42,10 @@ function setup() {
     [5,null,null,     null,3,null,    null,null,9],
     [2,null,null,     null,8,5,       4,null,null],
     [null,8,3,        null,1,null,    null,null,null]
-  ];
-  
-  // it was said puzzle02 can only be solved with swordfish pattern
-  let puzzle02 = [ // very hard! from http://www.sudokuessentials.com/Sudoku_Swordfish.html
+  ],
+
+  [ // very hard! from http://www.sudokuessentials.com/Sudoku_Swordfish.html
+    // it was said puzzle02 can only be solved with swordfish pattern
     [null,null,7,  null,null,4,    2,8,null],
     [null,null,null,  null,2,5,    null,null,4],
     [2,8,null,  null,null,null,    6,null,null],
@@ -63,31 +57,14 @@ function setup() {
     [null,null,6,  null,null,null,    null,7,8],
     [2,null,null,  5,7,null,    null,null,null],
     [null,7,5,  4,null,null,    3,null,null]
-  ];
-  
-  // selecting the puzzle to solve
-  for(let i=0;i<9;i++){
-    a[i] = puzzle02[i];
-  }
+  ]
+];
 
-  buildPossibilities();
-
-  let n = 10;
-  let cyc =0;
-  while(!winning && n>0){
-    seekingTruth();
-    for(let i=0;i<9;i++) soleCan(i);
-    boxBomb();
-    rowBomb();
-    n--;
-    cyc++;
-    checkWin();
-  }
-  
-  
-  // seekingTruth();
-  
-  // seekingTruth();
+function setup() {
+  createCanvas(side*1.3, side*1.3);
+  createSolvingButton();
+  createNextPuzzleButton();
+  loadPuzzle(currentPuzzle);
 
   // if (testing) {
   //   console.log(b);
@@ -96,18 +73,18 @@ function setup() {
   //     console.log("pos "+i+"," + j + "(" + a[i][j] + ")" + ": " + b[i][j]);
   //   }
   // }
-  
-  checkWin();
-  if(!winning) alert("not yet solved in "+cyc+" cycles");
-  else alert("solving complete in "+cyc+" cycles");
+
 }
 
 function draw() {
   background(255);
+  solvingButton.draw();
+  nextPuzzleButton.draw();
   let size = side/9;
-
+  
   // drawing the borders
   for(let i=1;i<9;i++){
+    stroke(0);
     if(i%3===0) strokeWeight(5);
     else strokeWeight(1);
     line(size*i,0,size*i,side);
@@ -118,14 +95,14 @@ function draw() {
   for(let i=0;i<9;i++){
     let initX =(i%3)*size*3+size/2;
     let initY = floor(i/3)*size*3+size/2;
-    
+    noStroke();
     for(let j=0;j<9;j++){
       textSize(0.50*size);
       textAlign(CENTER, CENTER);
       let addX = (j%3)*size;
       let addY = floor(j/3)*size;
       if(a[i][j]) text(a[i][j].toString(),initX+addX,initY+addY);
-      else{
+      else if(solving){
         textSize(0.15*size);
         text(b[i][j].toString(),initX+addX,initY+addY);
       }
@@ -134,6 +111,72 @@ function draw() {
 
 
 
+}
+
+function createSolvingButton(){
+  solvingButton = new Clickable(side+10,10);
+  solvingButton.cornerRadius = 3;
+  solvingButton.text = "solve";
+  solvingButton.width = 100;
+  solvingButton.height = 30;
+  solvingButton.onPress = function(){
+    solving = true;
+      // repeat the regime 10 times at max
+    if(!winning) workRegime(10); 
+    checkWin();
+    if(!winning) alert("not yet solved in "+cyc+" cycles");
+    else alert("solving complete in "+cyc+" cycles");
+  }
+}
+
+function createNextPuzzleButton(){
+  let xPos = side+10;
+  let yPos = 10+solvingButton.height+10;
+  nextPuzzleButton = new Clickable(xPos,yPos);
+  nextPuzzleButton.cornerRadius = 3;
+  nextPuzzleButton.text = "load next";
+  nextPuzzleButton.width = 100;
+  nextPuzzleButton.height = 30;
+  nextPuzzleButton.onPress = function(){
+    currentPuzzle++;
+    loadPuzzle(currentPuzzle);
+    console.log("loading puzzle0"+currentPuzzle);
+  }
+}
+
+function workRegime(i){
+  buildPossibilities();
+
+  let n = i;
+  cyc =0;
+  while(!winning && n>0){
+    seekingTruth();
+    for(let i=0;i<9;i++) soleCan(i);
+    boxBomb();
+    rowBomb();
+    n--;
+    cyc++;
+    checkWin();
+  }
+}
+
+function loadPuzzle(p){
+  solving = false;
+
+  // selecting the puzzle to solve
+  let num = p<puzzles.length ? p : currentPuzzle=0;
+
+  a = [];
+  b = [];
+  for(let i =0;i<9;i++){ // initiating a and b
+    a = a.concat([[]]);
+    a[i] = puzzles[num][i];
+
+    b = b.concat([[]]);
+    for(let j=0;j<9;j++){
+      b[i] = b[i].concat([[1,2,3,4,5,6,7,8,9]]);
+    }
+  } 
 }
 
 function buildPossibilities() {
@@ -343,4 +386,5 @@ function checkWin(){
     }
   }
   winning = true;
+  solving = false;
 }
