@@ -1,5 +1,6 @@
 let testing = false;
 let testRowBomb = false;
+let testLoad = true;
 
 
 let a = []; // truth, inside each small box is number
@@ -13,7 +14,7 @@ let cyc; // number of cycles.
 
 let side = 400;
 
-let puzzles = [
+const puzzles = [
   [ // 7 937 193 567
     // this puzzle can be done with soleCan, seekingTruth, and boxBomb
     [null,null,null,  null,null,9,    null,6,null],
@@ -120,12 +121,16 @@ function createSolvingButton(){
   solvingButton.width = 100;
   solvingButton.height = 30;
   solvingButton.onPress = function(){
+    console.log("solving puzzle0"+currentPuzzle);
     solving = true;
       // repeat the regime 10 times at max
     if(!winning) workRegime(10); 
     checkWin();
     if(!winning) alert("not yet solved in "+cyc+" cycles");
     else alert("solving complete in "+cyc+" cycles");
+
+    if (testLoad) console.log(a); 
+    if (testLoad) console.log(b);
   }
 }
 
@@ -140,12 +145,15 @@ function createNextPuzzleButton(){
   nextPuzzleButton.onPress = function(){
     currentPuzzle++;
     loadPuzzle(currentPuzzle);
-    console.log("loading puzzle0"+currentPuzzle);
   }
 }
 
 function workRegime(i){
   buildPossibilities();
+  if (testLoad) {
+    console.log("after buildPossibilities()");
+    console.log(b);
+  }
 
   let n = i;
   cyc =0;
@@ -161,10 +169,13 @@ function workRegime(i){
 }
 
 function loadPuzzle(p){
+  
   solving = false;
+  winning = false;
 
   // selecting the puzzle to solve
   let num = p<puzzles.length ? p : currentPuzzle=0;
+  console.log("loading puzzle0"+num);
 
   a = [];
   b = [];
@@ -176,7 +187,9 @@ function loadPuzzle(p){
     for(let j=0;j<9;j++){
       b[i] = b[i].concat([[1,2,3,4,5,6,7,8,9]]);
     }
-  } 
+  }
+  if (testLoad) console.log(a); 
+  if (testLoad) console.log(b);
 }
 
 function buildPossibilities() {
