@@ -65,6 +65,7 @@ function setup() {
     [null,7,5,  4,null,null,    3,null,null]
   ];
   
+  // selecting the puzzle to solve
   for(let i=0;i<9;i++){
     a[i] = puzzle02[i];
   }
@@ -190,6 +191,7 @@ function killPossibility(i,j){
   }
 }
 
+// sole candidate
 // extracting the only possibility in b[i][j] into a[i][j]
 // then we killPossibility of number in a[i][j]
 function seekingTruth(){
@@ -217,6 +219,7 @@ function seekingTruth(){
 
 }
 
+// naked subset in box
 function boxBomb(){
   for(let i=0;i<9;i++){
     for(let j=0;j<9;j++){
@@ -248,7 +251,8 @@ function boxBomb(){
   }
 }
 
-function soleCan(i){ // checking sole candidate in a box i
+// unique candidate in box i
+function soleCan(i){ 
   for(let num =1;num<=9;num++){ // check number num
     if (a[i] && a[i].includes(num)) continue;
 
@@ -274,6 +278,7 @@ function soleCan(i){ // checking sole candidate in a box i
   }
 }
 
+// naked subset in row
 function rowBomb(){
   for(let i=0;i<3;i++){
     let startI = i*3;
@@ -330,6 +335,7 @@ function rowBomb(){
   }
 }
 
+// checking the winner
 function checkWin(){
   for(let i=0;i<9;i++){
     for(let j=0;j<9;j++){
