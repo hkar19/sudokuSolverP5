@@ -124,14 +124,19 @@ function createSolvingButton(){
     console.log("solving puzzle0"+currentPuzzle);
     solving = true;
       // repeat the regime 10 times at max
-    if(!winning) workRegime(10); 
-    checkWin();
-    if(!winning) alert("not yet solved in "+cyc+" cycles");
-    else alert("solving complete in "+cyc+" cycles");
+    if(!winning) {
+      workRegime(10);
+      checkWin();
+      if(!winning) alert("not yet solved in "+cyc+" cycles");
+      else alert("solving complete in "+cyc+" cycles");
+    }
+    else  console.log("the puzzle is already solved");
 
-    if (testLoad) console.log(a); 
-    if (testLoad) console.log(b);
-  }
+    if (testLoad) {
+      console.log(a); 
+      console.log(b);
+    }
+  };
 }
 
 function createNextPuzzleButton(){
@@ -145,7 +150,7 @@ function createNextPuzzleButton(){
   nextPuzzleButton.onPress = function(){
     currentPuzzle++;
     loadPuzzle(currentPuzzle);
-  }
+  };
 }
 
 function workRegime(i){
@@ -170,6 +175,7 @@ function workRegime(i){
 
 function loadPuzzle(p){
   
+  // return all state into false
   solving = false;
   winning = false;
 
@@ -181,15 +187,18 @@ function loadPuzzle(p){
   b = [];
   for(let i =0;i<9;i++){ // initiating a and b
     a = a.concat([[]]);
-    a[i] = puzzles[num][i];
+    a = JSON.parse(JSON.stringify(puzzles[num]));
 
     b = b.concat([[]]);
     for(let j=0;j<9;j++){
       b[i] = b[i].concat([[1,2,3,4,5,6,7,8,9]]);
     }
   }
-  if (testLoad) console.log(a); 
-  if (testLoad) console.log(b);
+
+  if (testLoad) {
+    console.log(a); 
+    console.log(b);
+  }
 }
 
 function buildPossibilities() {
