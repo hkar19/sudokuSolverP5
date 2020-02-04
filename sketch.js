@@ -1,6 +1,6 @@
 let testing = false;
 let testRowBomb = false;
-let testLoad = true;
+let testLoad = false;
 
 
 let a = []; // truth, inside each small box is number
@@ -127,8 +127,15 @@ function createSolvingButton(){
     if(!winning) {
       workRegime(10);
       checkWin();
-      if(!winning) alert("not yet solved in "+cyc+" cycles");
-      else alert("solving complete in "+cyc+" cycles");
+      if(!winning) {
+        alert("not yet solved in "+cyc+" cycles");
+        console.log("puzzle "+currentPuzzle+" is failed to solve");
+      }
+      else {
+        alert("solving complete in "+cyc+" cycles");
+        console.log("puzzle "+currentPuzzle+" has solved");
+      }
+      
     }
     else  console.log("the puzzle is already solved");
 
@@ -187,7 +194,8 @@ function loadPuzzle(p){
   b = [];
   for(let i =0;i<9;i++){ // initiating a and b
     a = a.concat([[]]);
-    a = JSON.parse(JSON.stringify(puzzles[num]));
+    // a = JSON.parse(JSON.stringify(puzzles[num]));
+    a[i] = puzzles[num][i].slice();
 
     b = b.concat([[]]);
     for(let j=0;j<9;j++){
